@@ -1,13 +1,8 @@
 ﻿using Ambev.DeveloperEvaluation.Domain.Enums;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace Ambev.DeveloperEvaluation.Application.SalesItems
+namespace Ambev.DeveloperEvaluation.WebApi.Features.SalesItems.UpdateSaleItem
 {
-    public class CreateSaleItemCommand
+    public class UpdateSaleItemResponse
     {
         public Guid ProductId { get; set; }
         public decimal ProductUnitPrice { get; set; }

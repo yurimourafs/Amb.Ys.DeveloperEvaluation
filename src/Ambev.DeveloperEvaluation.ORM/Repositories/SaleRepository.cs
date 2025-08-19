@@ -30,6 +30,7 @@ namespace Ambev.DeveloperEvaluation.ORM.Repositories
 
         public async Task<Sale> UpdateAsync(Sale sale, CancellationToken cancellationToken = default)
         {
+            _context.SaleItems.RemoveRange(_context.SaleItems.Where(si => si.SaleId == sale.Id));
             _context.Sales.Update(sale);
             await _context.SaveChangesAsync(cancellationToken);
             return sale;
@@ -37,12 +38,12 @@ namespace Ambev.DeveloperEvaluation.ORM.Repositories
 
         public async Task<Sale?> GetByIdAsync(Guid id, CancellationToken cancellationToken = default)
         {
-            return await _context.Sales.FirstOrDefaultAsync(s => s.Id == id, cancellationToken);
+            return await _context.Sales.AsNoTracking().FirstOrDefaultAsync(s => s.Id == id, cancellationToken);
         }
 
         public async Task<Sale?> GetByNumberAsync(string saleNumber, CancellationToken cancellationToken = default)
         {
-            return await _context.Sales.FirstOrDefaultAsync(s => s.SaleNumber == saleNumber, cancellationToken);
+            return await _context.Sales.AsNoTracking().FirstOrDefaultAsync(s => s.SaleNumber == saleNumber, cancellationToken);
         }
 
         public async Task<(List<Sale>, int, int, int)> ListPaginatedAsync(int page, int size, string order, CancellationToken cancellationToken = default)

@@ -23,9 +23,6 @@ public class CreateSaleRequestValidator : AbstractValidator<CreateSaleRequest>
         RuleFor(s => s.BranchId)
             .NotEqual(Guid.Empty).WithMessage("BranchId must be a valid UUID.");
 
-        RuleFor(s => s.TotalAmount)
-            .GreaterThanOrEqualTo(0).WithMessage("TotalAmount must be non-negative.");
-
         RuleFor(s => s.Status)
             .NotEqual(SaleStatus.Unknown).WithMessage("Sale status cannot be Unknown.");
     }

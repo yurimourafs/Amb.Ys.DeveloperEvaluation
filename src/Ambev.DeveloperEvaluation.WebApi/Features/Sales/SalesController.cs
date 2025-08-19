@@ -1,9 +1,11 @@
 ﻿using Ambev.DeveloperEvaluation.Application.Sales.CreateSale;
 using Ambev.DeveloperEvaluation.Application.Sales.GetSale;
+using Ambev.DeveloperEvaluation.Application.Sales.UpdateSale;
 using Ambev.DeveloperEvaluation.Application.Users.GetUser;
 using Ambev.DeveloperEvaluation.WebApi.Common;
 using Ambev.DeveloperEvaluation.WebApi.Features.Sales.CreateSale;
 using Ambev.DeveloperEvaluation.WebApi.Features.Sales.GetSale;
+using Ambev.DeveloperEvaluation.WebApi.Features.Sales.UpdateSale;
 using Ambev.DeveloperEvaluation.WebApi.Features.Users.GetUser;
 using AutoMapper;
 using MediatR;
@@ -82,10 +84,45 @@ namespace Ambev.DeveloperEvaluation.WebApi.Features.Sales
 
             var response = _mapper.Map<CreateSaleResponse>(result);
 
-            return Created(nameof(GetSale), new { id = response.Id }, new ApiResponseWithData<CreateSaleResponse>
+            return Created(string.Empty, new { id = response.Id }, new ApiResponseWithData<CreateSaleResponse>
             {
                 Success = true,
                 Message = "Sale created successfully",
+                Data = response
+            });
+        }
+
+        /// <summary>
+        /// Updates an existing sale
+        /// </summary>
+        /// <param name="id">The unique identifier of the sale</param>
+        /// <param name="request">The sale data to update</param>
+        /// <param name="cancellationToken">Cancellation token</param>
+        /// <returns>The updated sale details</returns>
+        [HttpPut("{id}")]
+        [ProducesResponseType(typeof(ApiResponseWithData<UpdateSaleResponse>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status404NotFound)]
+        public async Task<IActionResult> UpdateSale([FromRoute] Guid id, [FromBody] UpdateSaleRequest request, CancellationToken cancellationToken)
+        {
+            if (id != request.Id)
+                return BadRequest("Id in route and body must match.");
+
+            var validator = new UpdateSaleRequestValidator();
+            var validationResult = await validator.ValidateAsync(request, cancellationToken);
+
+            if (!validationResult.IsValid)
+                return BadRequest(validationResult.Errors);
+
+            var command = _mapper.Map<UpdateSaleCommand>(request);
+            var result = await _mediator.Send(command, cancellationToken);
+
+            var response = _mapper.Map<UpdateSaleResponse>(result);
+
+            return Ok(new ApiResponseWithData<UpdateSaleResponse>
+            {
+                Success = true,
+                Message = "Sale updated successfully",
                 Data = response
             });
         }

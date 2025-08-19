@@ -23,21 +23,5 @@ namespace Ambev.DeveloperEvaluation.Domain.Entities
         public DateTime? UpdatedAt { get; set; }
 
         public virtual Sale Sale { get; set; } = new();
-
-        public SaleItem()
-        {
-            CreatedAt = DateTime.UtcNow;
-        }
-
-        public ValidationResultDetail Validate()
-        {
-            var validator = new SaleItemValidator();
-            var result = validator.Validate(this);
-            return new ValidationResultDetail
-            {
-                IsValid = result.IsValid,
-                Errors = result.Errors.Select(o => (ValidationErrorDetail)o)
-            };
-        }
     }
 }

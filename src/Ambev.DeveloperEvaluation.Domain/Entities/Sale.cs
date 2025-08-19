@@ -2,12 +2,8 @@
 using Ambev.DeveloperEvaluation.Domain.Common;
 using Ambev.DeveloperEvaluation.Domain.Enums;
 using Ambev.DeveloperEvaluation.Domain.Validation;
-using Microsoft.AspNetCore.Identity;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using FluentValidation;
+using FluentValidation.Results;
 
 namespace Ambev.DeveloperEvaluation.Domain.Entities
 {
@@ -29,9 +25,44 @@ namespace Ambev.DeveloperEvaluation.Domain.Entities
 
         public virtual List<SaleItem>? Items { get; set; }
 
-        public Sale()
+        public void ApplyDiscount()
         {
-            CreatedAt = DateTime.UtcNow;
+            if (Items == null || Items.Count == 0)
+            {
+                Discount = 0;
+                TotalAmount = 0;
+                TotalAmountWithDiscount = 0;
+                return;
+            }
+
+            // Agrupa por ProductId e soma as quantidades
+            var productQuantities = Items
+                .GroupBy(i => i.ProductId)
+                .Select(g => new { ProductId = g.Key, Count = g.Count(), Items = g.ToList() })
+                .ToList();
+
+            decimal totalAmount = Items.Sum(i => i.ProductUnitPrice);
+
+            // Determina o maior tier de desconto aplicável
+            int maxIdentical = productQuantities.Max(g => g.Count);
+            int totalItems = Items.Count;
+
+            decimal discountPercent = 0;
+
+            if (maxIdentical >= 4)
+                discountPercent = 0.10m;
+
+            if (totalItems >= 10 && totalItems <= 20)
+                discountPercent = Math.Max(discountPercent, 0.20m);
+
+            Discount = discountPercent * 100; // em porcentagem
+            TotalAmount = totalAmount;
+            TotalAmountWithDiscount = totalAmount * (1 - discountPercent);
+        }
+
+        public void Update()
+        {
+            UpdatedAt = DateTime.UtcNow;
         }
 
         public ValidationResultDetail Validate()

@@ -1,7 +1,7 @@
 ﻿using Ambev.DeveloperEvaluation.Domain.Enums;
 using FluentValidation;
 
-namespace Ambev.DeveloperEvaluation.Application.SalesItems
+namespace Ambev.DeveloperEvaluation.Application.SalesItems.CreateSaleItem
 {
     public class CreateSaleItemCommandValidator : AbstractValidator<CreateSaleItemCommand>
     {

@@ -1,12 +1,12 @@
-﻿using Ambev.DeveloperEvaluation.Application.SalesItems.CreateSaleItem;
-using Ambev.DeveloperEvaluation.Domain.Enums;
+﻿using Ambev.DeveloperEvaluation.Domain.Enums;
+using Ambev.DeveloperEvaluation.WebApi.Features.SalesItems.UpdateSaleItem;
 
-namespace Ambev.DeveloperEvaluation.Application.Sales.CreateSale;
+namespace Ambev.DeveloperEvaluation.WebApi.Features.Sales.UpdateSale;
 
 /// <summary>
-/// Response returned after successfully creating a new sale.
+/// Response model for a successfully updated sale.
 /// </summary>
-public class CreateSaleResult
+public class UpdateSaleResponse
 {
     public Guid Id { get; set; }
     public string SaleNumber { get; set; } = string.Empty;
@@ -17,5 +17,6 @@ public class CreateSaleResult
     public decimal TotalAmountWithDiscount { get; set; }
     public Guid BranchId { get; set; }
     public SaleStatus Status { get; set; }
-    public List<CreateSaleItemResult>? Items { get; set; }
+    public DateTime? UpdatedAt { get; set; }
+    public List<UpdateSaleItemResponse>? Items { get; set; }
 }

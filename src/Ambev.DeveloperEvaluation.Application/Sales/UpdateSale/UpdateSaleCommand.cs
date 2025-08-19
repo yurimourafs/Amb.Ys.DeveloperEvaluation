@@ -1,27 +1,27 @@
-﻿using Ambev.DeveloperEvaluation.Application.SalesItems.CreateSaleItem;
+﻿using Ambev.DeveloperEvaluation.Application.SalesItems.UpdateSaleItem;
 using Ambev.DeveloperEvaluation.Common.Validation;
 using Ambev.DeveloperEvaluation.Domain.Enums;
 using MediatR;
 
-namespace Ambev.DeveloperEvaluation.Application.Sales.CreateSale;
+namespace Ambev.DeveloperEvaluation.Application.Sales.UpdateSale;
 
 /// <summary>
-/// Command for creating a new sale.
+/// Command for updating an existing sale.
 /// </summary>
-public class CreateSaleCommand : IRequest<CreateSaleResult>
+public class UpdateSaleCommand : IRequest<UpdateSaleResult>
 {
+    public Guid Id { get; set; }
     public string SaleNumber { get; set; } = string.Empty;
     public DateTime Date { get; set; }
     public Guid CustomerId { get; set; }
     public decimal TotalAmount { get; set; }
     public Guid BranchId { get; set; }
     public SaleStatus Status { get; set; }
-
-    public List<CreateSaleItemCommand>? Items { get; set; }
+    public List<UpdateSaleItemCommand>? Items { get; set; }
 
     public ValidationResultDetail Validate()
     {
-        var validator = new CreateSaleCommandValidator();
+        var validator = new UpdateSaleCommandValidator();
         var result = validator.Validate(this);
         return new ValidationResultDetail
         {
