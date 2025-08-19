@@ -2,6 +2,9 @@
 using Ambev.DeveloperEvaluation.Application.Sales.GetSale;
 using Ambev.DeveloperEvaluation.Application.Sales.UpdateSale;
 using Ambev.DeveloperEvaluation.Application.Users.GetUser;
+using Ambev.DeveloperEvaluation.Domain.Entities;
+using Ambev.DeveloperEvaluation.Domain.Repositories;
+using Ambev.DeveloperEvaluation.ORM;
 using Ambev.DeveloperEvaluation.WebApi.Common;
 using Ambev.DeveloperEvaluation.WebApi.Features.Sales.CreateSale;
 using Ambev.DeveloperEvaluation.WebApi.Features.Sales.GetSale;
@@ -11,6 +14,7 @@ using AutoMapper;
 using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace Ambev.DeveloperEvaluation.WebApi.Features.Sales
 {
@@ -20,16 +24,18 @@ namespace Ambev.DeveloperEvaluation.WebApi.Features.Sales
     {
         private readonly IMediator _mediator;
         private readonly IMapper _mapper;
+        private readonly DefaultContext _ctx;
 
         /// <summary>
         /// Initializes a new instance of UsersController
         /// </summary>
         /// <param name="mediator">The mediator instance</param>
         /// <param name="mapper">The AutoMapper instance</param>
-        public SalesController(IMediator mediator, IMapper mapper)
+        public SalesController(IMediator mediator, IMapper mapper, DefaultContext ctx)
         {
             _mediator = mediator;
             _mapper = mapper;
+            _ctx = ctx;
         }
 
         /// <summary>
@@ -125,6 +131,22 @@ namespace Ambev.DeveloperEvaluation.WebApi.Features.Sales
                 Message = "Sale updated successfully",
                 Data = response
             });
+        }
+
+        /// <summary>
+        /// Lists all sales with pagination
+        /// </summary>
+        /// <param name="page">Page number (default: 1)</param>
+        /// <param name="size">Page size (default: 10)</param>
+        /// <param name="cancellationToken">Cancellation token</param>
+        /// <returns>Paginated list of sales</returns>
+        [HttpGet]
+        [ProducesResponseType(typeof(PaginatedResponse<PaginatedResponse<Sale>>), StatusCodes.Status200OK)]
+        public async Task<IActionResult> ListSales([FromQuery] int page = 1, [FromQuery] int size = 10, CancellationToken cancellationToken = default)
+        {
+            var list = await PaginatedList<Sale>.CreateAsync(_ctx.Sales.Include(i => i.Items).AsNoTracking().AsQueryable(), page, size);
+
+            return OkPaginated(list);
         }
     }
 }
