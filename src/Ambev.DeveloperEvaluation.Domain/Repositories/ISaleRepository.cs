@@ -28,21 +28,11 @@ namespace Ambev.DeveloperEvaluation.Domain.Repositories
         Task<Sale?> GetByIdAsync(Guid id, CancellationToken cancellationToken = default);
 
         /// <summary>
-        /// Lists sales with pagination and ordering
-        /// </summary>
-        /// <param name="page"></param>
-        /// <param name="size"></param>
-        /// <param name="order"></param>
-        /// <param name="cancellationToken"></param>
-        /// <returns>
-        /// List of sales, total items, total pages, current page
-        /// </returns>
-        Task<(List<Sale>, int, int, int)> ListPaginatedAsync(int page, int size, string order, CancellationToken cancellationToken = default);
-
-        /// <summary>
         /// Deletes a sale from the repository
         /// </summary>
         Task<bool> DeleteAsync(Guid id, CancellationToken cancellationToken = default);
+
         Task<Sale?> GetByNumberAsync(string saleNumber, CancellationToken cancellationToken = default);
+        Task<Sale?> GetByIdWithItemsAsync(Guid id, CancellationToken cancellationToken = default);
     }
 }

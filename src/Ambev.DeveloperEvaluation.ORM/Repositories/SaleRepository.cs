@@ -46,38 +46,23 @@ namespace Ambev.DeveloperEvaluation.ORM.Repositories
             return await _context.Sales.AsNoTracking().FirstOrDefaultAsync(s => s.SaleNumber == saleNumber, cancellationToken);
         }
 
-        public async Task<(List<Sale>, int, int, int)> ListPaginatedAsync(int page, int size, string order, CancellationToken cancellationToken = default)
-        {
-            var query = _context.Sales.AsQueryable();
-
-            // Simple ordering by property name (default: SaleNumber)
-            query = order switch
-            {
-                "Date" => query.OrderBy(s => s.Date),
-                "TotalAmount" => query.OrderBy(s => s.TotalAmount),
-                _ => query.OrderBy(s => s.SaleNumber)
-            };
-
-            var totalItems = await query.CountAsync(cancellationToken);
-            var totalPages = (int)Math.Ceiling(totalItems / (double)size);
-
-            var items = await query
-                .Skip((page - 1) * size)
-                .Take(size)
-                .ToListAsync(cancellationToken);
-
-            return (items, totalItems, totalPages, page);
-        }
-
         public async Task<bool> DeleteAsync(Guid id, CancellationToken cancellationToken = default)
         {
-            var sale = await GetByIdAsync(id, cancellationToken);
+            var sale = await GetByIdWithItemsAsync(id, cancellationToken);
             if (sale == null)
                 return false;
 
+            if (sale.Items is not null)
+                _context.SaleItems.RemoveRange(sale.Items);
+
             _context.Sales.Remove(sale);
-            await _context.SaveChangesAsync(cancellationToken);
-            return true;
+
+            return await _context.SaveChangesAsync(cancellationToken) > 0;
+        }
+
+        public async Task<Sale?> GetByIdWithItemsAsync(Guid id, CancellationToken cancellationToken = default)
+        {
+            return await _context.Sales.Include(i => i.Items).AsNoTracking().FirstOrDefaultAsync(s => s.Id == id, cancellationToken);
         }
     }
 }
