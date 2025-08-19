@@ -14,6 +14,7 @@ using Ambev.DeveloperEvaluation.WebApi.Features.Sales.UpdateSale;
 using Ambev.DeveloperEvaluation.WebApi.Features.Users.GetUser;
 using AutoMapper;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -22,6 +23,7 @@ namespace Ambev.DeveloperEvaluation.WebApi.Features.Sales
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class SalesController : BaseController
     {
         private readonly IMediator _mediator;
