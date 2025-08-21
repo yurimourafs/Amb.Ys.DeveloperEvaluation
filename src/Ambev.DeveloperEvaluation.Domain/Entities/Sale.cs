@@ -23,7 +23,7 @@ namespace Ambev.DeveloperEvaluation.Domain.Entities
         public DateTime CreatedAt { get; set; }
         public DateTime? UpdatedAt { get; set; }
 
-        public virtual List<SaleItem>? Items { get; set; }
+        public virtual List<SaleItem> Items { get; set; } = [];
 
         public void ApplyDiscount()
         {
