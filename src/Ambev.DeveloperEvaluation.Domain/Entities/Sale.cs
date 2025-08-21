@@ -20,7 +20,7 @@ namespace Ambev.DeveloperEvaluation.Domain.Entities
         public decimal TotalAmountWithDiscount { get; set; }
         public Guid BranchId { get; set; }
         public SaleStatus Status { get; set; }
-        public DateTime CreatedAt { get; set; }
+        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
         public DateTime? UpdatedAt { get; set; }
 
         public virtual List<SaleItem> Items { get; set; } = [];

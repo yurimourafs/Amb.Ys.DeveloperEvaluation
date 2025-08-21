@@ -19,7 +19,7 @@ namespace Ambev.DeveloperEvaluation.Domain.Entities
         public Guid ProductId { get; set; }
         public decimal ProductUnitPrice { get; set; }
         public SaleItemStatus Status { get; set; }
-        public DateTime CreatedAt { get; set; }
+        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
         public DateTime? UpdatedAt { get; set; }
 
         public virtual Sale Sale { get; set; } = new();
